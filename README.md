@@ -1,4 +1,11 @@
-userAuth
+puppy-web
 ========
 
-User Authentication with express, passport, and orchestrate. Read the blog post [here] (https://orchestrate.io/blog/2014/06/26/build-user-authentication-with-node-js-express-passport-and-orchestrate/).
+User Authentication with express, passport, and orchestrate. use in node.js the method to start up the web service is:
+```bash
+node
+```
+```javascript
+var web = require('./')
+```
+your command line must be in the repository to do this
