@@ -1,0 +1,134 @@
+<!-- views/layouts/main.handlebars -->
+<!DOCTYPE html>
+{{#if use}}<html lang="en"><head>
+<title>Custom Commandline</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font: 13px Helvetica, Arial; }
+form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages li { padding: 5px 10px; }
+#messages li:nth-child(odd) { background: #eee; }
+</style>
+</head>
+<body>
+<ul id="messages">
+</ul>
+<form action="">
+<input id="m" autocomplete="off" />
+<button>Send</button>
+</form>
+<script src="/socket.io-1.2.0.js"></script>
+<script src="/jquery-1.11.1.js"></script>{{#if user}}<script>
+var socket = io("http://"+location.hostname+":3000");
+$('form').submit(function(){
+socket.emit('chat message', {"command": $('#m').val(), "user":"{{user.username}}"});
+$('#m').val('');
+return false;
+});
+socket.on('chat message', function(msg){
+$('#messages').append($('<li>').text(msg));
+});</script>
+{{else}}<script>
+var socket = io("http://"+location.hostname+":3000/");
+$('form').submit(function(){
+socket.emit('chat message', {"command": $('#m').val(), "user": "HIDDDEN"});
+$('#m').val('');
+return false;
+});
+socket.on('chat message', function(msg){
+$('#messages').append($('<li>').text(msg));
+});</script>{{/if}}
+</body>
+</html>{{else}}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="User Authentication">
+  <meta name="author" content="">
+{{#if user}}
+  <title>Welcome, {{user.username}}</title>{{else}}
+  <title>Please log in</title>
+{{/if}}
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li>
+              {{#if user}}
+                <p class="navbar-text">
+                  <strong>Hi,</strong> 
+                  <img src="{{user.avatar}}" width="20" height="20">
+                  {{user.username}}
+                </p>
+                </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li>
+				    <a href="/chat">Live Chat        </a>
+                    <a href="/logout">Log Out</a>
+                  </li>
+              {{else}}
+                <a href="/signin">Sign In</a>
+                </li>
+              {{/if}}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+      
+    {{#if error}}
+      <p class="alert alert-warning">{{error}}</p>
+    {{/if}}
+
+    {{#if success}}
+      <p class="alert alert-success">{{success}}</p>
+    {{/if}}
+
+    {{#if notice}}
+      <p class="alert alert-info">{{notice}}</p>
+    {{/if}}
+
+    <!--where our other templates will insert-->
+    {{{body}}}
+      
+
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+  <script src="/bootstrap.min.js"></script>
+</body>
+</html>
+{{/if}}
